@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heights Connect – Washington Heights Business Directory</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Heights <span>Connect</span></div>
+    <div class="nav-links">
+      <a href="#directory">Directory</a>
+      <a href="#submit">Add Business</a>
+      <a href="#about">About</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="eyebrow">Washington Heights, New York</p>
+      <h1>Discover Local<br><span>Businesses</span></h1>
+      <p class="hero-sub">Find and support authentic businesses in our community / Encuentra y apoya negocios auténticos en nuestra comunidad</p>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search businesses... / Buscar negocios...">
+        <button onclick="searchBusinesses()">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="categories">
+    <div class="container">
+      <div class="cat-grid">
+        <button class="cat-btn active" onclick="filterCategory('all')">All / Todos</button>
+        <button class="cat-btn" onclick="filterCategory('Restaurant')">🍽️ Restaurants</button>
+        <button class="cat-btn" onclick="filterCategory('Barbershop')">✂️ Barbershops</button>
+        <button class="cat-btn" onclick="filterCategory('Grocery')">🛒 Grocery</button>
+        <button class="cat-btn" onclick="filterCategory('Health')">💊 Health</button>
+        <button class="cat-btn" onclick="filterCategory('Services')">🔧 Services</button>
+        <button class="cat-btn" onclick="filterCategory('Retail')">🛍️ Retail</button>
+        <button class="cat-btn" onclick="filterCategory('Beauty')">💅 Beauty</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIRECTORY -->
+  <section class="directory" id="directory">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Local Businesses / Negocios Locales</p>
+        <h2>Business Directory</h2>
+      </div>
+      <div id="businessGrid" class="business-grid">
+        <div class="loading">Loading businesses...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBMIT FORM -->
+  <section class="submit-section" id="submit">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Grow the Directory / Crecer el Directorio</p>
+        <h2>Add Your Business</h2>
+        <p class="section-sub">Submit your business to be listed in the directory. / Envía tu negocio para ser incluido en el directorio.</p>
+      </div>
+      <form id="businessForm" class="business-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Business Name / Nombre del Negocio *</label>
+            <input type="text" id="name" required placeholder="e.g. Dominican Valle Restaurant">
+          </div>
+          <div class="form-group">
+            <label>Category / Categoría *</label>
+            <select id="category" required>
+              <option value="">Select a category</option>
+              <option value="Restaurant">Restaurant</option>
+              <option value="Barbershop">Barbershop</option>
+              <option value="Grocery">Grocery</option>
+              <option value="Health">Health</option>
+              <option value="Services">Services</option>
+              <option value="Retail">Retail</option>
+              <option value="Beauty">Beauty</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label>Description / Descripción *</label>
+            <textarea id="description" required placeholder="Tell us about your business..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Address / Dirección *</label>
+            <input type="text" id="address" required placeholder="e.g. 1601 St Nicholas Ave">
+          </div>
+          <div class="form-group">
+            <label>Phone / Teléfono</label>
+            <input type="text" id="phone" placeholder="e.g. (212) 555-0100">
+          </div>
+          <div class="form-group">
+            <label>Hours / Horario</label>
+            <input type="text" id="hours" placeholder="e.g. Mon-Sun 7AM-11PM">
+          </div>
+          <div class="form-group">
+            <label>Website</label>
+            <input type="text" id="website" placeholder="e.g. www.yourbusiness.com">
+          </div>
+          <div class="form-group">
+            <label>Instagram</label>
+            <input type="text" id="instagram" placeholder="e.g. @yourbusiness">
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Submit Business / Enviar Negocio</button>
+        <p id="formMessage" class="form-message"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div>
+          <p class="section-label">Our Mission / Nuestra Misión</p>
+          <h2>Built for the Heights Community</h2>
+          <p>Heights Connect is a community-driven directory dedicated to helping people discover and support local businesses in Washington Heights, New York.</p>
+          <p>Heights Connect es un directorio comunitario dedicado a ayudar a las personas a descubrir y apoyar los negocios locales en Washington Heights.</p>
+        </div>
+        <div class="about-stats">
+          <div class="stat-card">
+            <div class="stat-num" id="totalCount">0</div>
+            <div class="stat-label">Businesses Listed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">8</div>
+            <div class="stat-label">Categories</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Community</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Heights <span>Connect</span></div>
+      <p>Washington Heights, New York · Supporting local businesses / Apoyando negocios locales</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

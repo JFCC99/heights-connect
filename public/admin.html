@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heights Connect – Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f2538;
+      --gold: #d4a843;
+      --accent: #c0392b;
+      --green: #2d6a27;
+      --cream: #fdf8f0;
+      --warm: #f5ede0;
+      --border: #e8ddd0;
+      --muted: #6b5e52;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* LOGIN */
+    #loginView {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--navy), #2d6a27);
+    }
+
+    .login-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    .login-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .login-logo span { color: var(--gold); }
+
+    .login-card p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .login-card label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .login-card input:focus { border-color: var(--green); }
+
+    .login-btn {
+      width: 100%;
+      margin-top: 24px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover { background: #e74c3c; }
+
+    #loginError {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--accent);
+      text-align: center;
+      min-height: 18px;
+    }
+
+    /* DASHBOARD */
+    #dashboardView { display: none; }
+
+    header {
+      background: var(--navy);
+      border-bottom: 2px solid var(--gold);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    .header-logo span { color: var(--gold); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-right span {
+      font-size: 13px;
+      color: #b0c4d8;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #4a6a8a;
+      color: #b0c4d8;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    .dashboard-body { padding: 32px; max-width: 1100px; margin: 0 auto; }
+
+    .dash-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .dash-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    /* FILTER TABS */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+      font-weight: 500;
+    }
+
+    /* TABLE */
+    .table-wrap {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--warm);
+    }
+
+    th {
+      text-align: left;
+      padding: 13px 18px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    td {
+      padding: 16px 18px;
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:hover td { background: #fafaf8; }
+
+    .biz-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .biz-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+      max-width: 300px;
+    }
+
+    .cat-tag {
+      display: inline-block;
+      background: var(--warm);
+      color: var(--green);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      display: inline-block;
+      background: #fff3cd;
+      color: #856404;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .status-approved {
+      display: inline-block;
+      background: #d1f5d3;
+      color: var(--green);
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .action-btns { display: flex; gap: 8px; }
+
+    .btn-approve {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s;
+    }
+
+    .btn-approve:hover { opacity: 0.85; }
+
+    .btn-delete {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover { background: var(--accent); color: #fff; }
+
+    .empty-row td {
+      text-align: center;
+      padding: 48px;
+      color: var(--muted);
+    }
+
+    #loadingRow td { text-align: center; padding: 40px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN VIEW -->
+  <div id="loginView">
+    <div class="login-card">
+      <div class="login-logo">Heights <span>Connect</span></div>
+      <p>Admin Panel — sign in to continue</p>
+      <form id="loginForm">
+        <label>Username</label>
+        <input type="text" id="loginUsername" autocomplete="username" required>
+        <label>Password</label>
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+        <button type="submit" class="login-btn">Sign In</button>
+      </form>
+      <p id="loginError"></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD VIEW -->
+  <div id="dashboardView">
+    <header>
+      <div class="header-logo">Heights <span>Connect</span> Admin</div>
+      <div class="header-right">
+        <span id="adminName"></span>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <h1 class="dash-title">Business Submissions</h1>
+      <p class="dash-sub">Review, approve, or remove submitted businesses.</p>
+
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="setFilter('pending', this)">
+          Pending <span class="badge" id="pendingCount">0</span>
+        </button>
+        <button class="tab-btn" onclick="setFilter('approved', this)">Approved</button>
+        <button class="tab-btn" onclick="setFilter('all', this)">All</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Business</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="businessTableBody">
+            <tr id="loadingRow"><td colspan="5">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api'
+    let allBusinesses = []
+    let currentFilter = 'pending'
+
+    // --- AUTH ---
+
+    function getToken() {
+      return localStorage.getItem('hc_admin_token')
+    }
+
+    function logout() {
+      localStorage.removeItem('hc_admin_token')
+      document.getElementById('dashboardView').style.display = 'none'
+      document.getElementById('loginView').style.display = 'flex'
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const errorEl = document.getElementById('loginError')
+      errorEl.textContent = ''
+
+      const username = document.getElementById('loginUsername').value
+      const password = document.getElementById('loginPassword').value
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        })
+        const data = await res.json()
+
+        if (!res.ok) {
+          errorEl.textContent = data.message || 'Login failed'
+          return
+        }
+
+        localStorage.setItem('hc_admin_token', data.token)
+        showDashboard(username)
+      } catch {
+        errorEl.textContent = 'Server error. Is the server running?'
+      }
+    })
+
+    // --- DASHBOARD ---
+
+    function showDashboard(username) {
+      document.getElementById('loginView').style.display = 'none'
+      document.getElementById('dashboardView').style.display = 'block'
+      document.getElementById('adminName').textContent = username
+      loadBusinesses()
+    }
+
+    async function loadBusinesses() {
+      const token = getToken()
+      try {
+        const res = await fetch(`${API}/businesses/admin/all`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        if (res.status === 401 || res.status === 403) {
+          logout()
+          return
+        }
+
+        allBusinesses = await res.json()
+        updatePendingCount()
+        renderTable()
+      } catch {
+        document.getElementById('businessTableBody').innerHTML =
+          '<tr class="empty-row"><td colspan="5">Failed to load businesses.</td></tr>'
+      }
+    }
+
+    function updatePendingCount() {
+      const count = allBusinesses.filter(b => !b.approved).length
+      document.getElementById('pendingCount').textContent = count
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      renderTable()
+    }
+
+    function renderTable() {
+      const filtered = allBusinesses.filter(b => {
+        if (currentFilter === 'pending') return !b.approved
+        if (currentFilter === 'approved') return b.approved
+        return true
+      })
+
+      const tbody = document.getElementById('businessTableBody')
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No businesses in this category.</td></tr>`
+        return
+      }
+
+      tbody.innerHTML = filtered.map(b => `
+        <tr>
+          <td>
+            <div class="biz-name">${escapeHtml(b.name)}</div>
+            <div class="biz-desc">${escapeHtml(b.description)}</div>
+          </td>
+          <td><span class="cat-tag">${escapeHtml(b.category)}</span></td>
+          <td>
+            ${b.approved
+              ? '<span class="status-approved">Approved</span>'
+              : '<span class="status-pending">Pending</span>'}
+          </td>
+          <td>${new Date(b.createdAt).toLocaleDateString()}</td>
+          <td>
+            <div class="action-btns">
+              ${!b.approved
+                ? `<button class="btn-approve" onclick="approveBusiness('${b._id}')">Approve</button>`
+                : ''}
+              <button class="btn-delete" onclick="deleteBusiness('${b._id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('')
+    }
+
+    // Prevent XSS when rendering user-submitted data into the table
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    async function approveBusiness(id) {
+      const token = getToken()
+      try {
+        const res = await fetch(`${API}/businesses/${id}/approve`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (res.ok) {
+          const updated = await res.json()
+          allBusinesses = allBusinesses.map(b => b._id === id ? updated : b)
+          updatePendingCount()
+          renderTable()
+        }
+      } catch {
+        alert('Failed to approve business.')
+      }
+    }
+
+    async function deleteBusiness(id) {
+      if (!confirm('Delete this business? This cannot be undone.')) return
+      const token = getToken()
+      try {
+        const res = await fetch(`${API}/businesses/${id}`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (res.ok) {
+          allBusinesses = allBusinesses.filter(b => b._id !== id)
+          updatePendingCount()
+          renderTable()
+        }
+      } catch {
+        alert('Failed to delete business.')
+      }
+    }
+
+    // --- INIT: check for existing token on page load ---
+    const existingToken = getToken()
+    if (existingToken) {
+      // Decode username from token payload (middle segment, base64)
+      try {
+        const payload = JSON.parse(atob(existingToken.split('.')[1]))
+        showDashboard(payload.username)
+      } catch {
+        logout()
+      }
+    }
+  </script>
+
+</body>
+</html>

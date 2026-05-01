@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heights Connect</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    .detail-page { padding: 60px 0 80px; }
+
+    .back-link {
+      display: inline-block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      margin-bottom: 36px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--navy); }
+
+    .detail-header { margin-bottom: 36px; }
+
+    .detail-name {
+      font-size: clamp(32px, 5vw, 52px);
+      color: var(--navy);
+      margin: 14px 0 0;
+      line-height: 1.15;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .detail-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .detail-card h2 {
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 20px;
+    }
+
+    .detail-card p { color: var(--muted); line-height: 1.8; font-size: 15px; }
+
+    .info-list { display: flex; flex-direction: column; gap: 20px; }
+
+    .info-item { display: flex; gap: 14px; align-items: flex-start; }
+
+    .info-icon {
+      font-size: 18px;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .info-value { font-size: 14px; color: var(--text); }
+    .info-value a { color: var(--green); text-decoration: none; }
+    .info-value a:hover { text-decoration: underline; }
+
+    .error-state { text-align: center; padding: 80px 24px; }
+    .error-state h2 { font-size: 32px; color: var(--navy); margin-bottom: 12px; }
+    .error-state p { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+
+    .btn-back {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background: #e74c3c; }
+
+    @media (max-width: 768px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" style="text-decoration:none;">
+      <div class="nav-logo">Heights <span>Connect</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="/#directory">Directory</a>
+      <a href="/#submit">Add Business</a>
+      <a href="/#about">About</a>
+    </div>
+  </nav>
+
+  <main class="detail-page">
+    <div class="container" id="content">
+      <div style="text-align:center;padding:80px;color:var(--muted);">Loading...</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Heights <span>Connect</span></div>
+      <p>Washington Heights, New York · Supporting local businesses / Apoyando negocios locales</p>
+    </div>
+  </footer>
+
+  <script>
+    const id = window.location.pathname.split('/').pop()
+
+    async function loadBusiness() {
+      try {
+        const res = await fetch(`/api/businesses/${id}`)
+        if (res.status === 404) {
+          showError('Business not found', 'This listing may have been removed or the link is incorrect.')
+          return
+        }
+        if (!res.ok) throw new Error()
+        const b = await res.json()
+        document.title = `${b.name} – Heights Connect`
+        render(b)
+      } catch {
+        showError('Something went wrong', 'Unable to load this listing. Please try again later.')
+      }
+    }
+
+    function render(b) {
+      const rawWebsite = b.website || ''
+      const websiteHref = rawWebsite
+        ? (rawWebsite.match(/^https?:\/\//) ? rawWebsite : `https://${rawWebsite}`)
+        : null
+      const websiteDisplay = websiteHref ? websiteHref.replace(/^https?:\/\//, '') : null
+      const instaHandle = b.instagram ? b.instagram.replace(/^@/, '') : null
+
+      document.getElementById('content').innerHTML = `
+        <a href="/" class="back-link">← Back to Directory</a>
+
+        <div class="detail-header">
+          <span class="business-category">${escapeHtml(b.category)}</span>
+          <h1 class="detail-name">${escapeHtml(b.name)}</h1>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-card">
+            <h2>About</h2>
+            <p>${escapeHtml(b.description)}</p>
+          </div>
+
+          <div class="detail-card">
+            <h2>Details</h2>
+            <div class="info-list">
+              <div class="info-item">
+                <span class="info-icon">📍</span>
+                <div>
+                  <div class="info-label">Address</div>
+                  <div class="info-value">${escapeHtml(b.address)}</div>
+                </div>
+              </div>
+              ${b.phone ? `
+              <div class="info-item">
+                <span class="info-icon">📞</span>
+                <div>
+                  <div class="info-label">Phone</div>
+                  <div class="info-value"><a href="tel:${escapeHtml(b.phone)}">${escapeHtml(b.phone)}</a></div>
+                </div>
+              </div>` : ''}
+              ${b.hours ? `
+              <div class="info-item">
+                <span class="info-icon">🕐</span>
+                <div>
+                  <div class="info-label">Hours</div>
+                  <div class="info-value">${escapeHtml(b.hours)}</div>
+                </div>
+              </div>` : ''}
+              ${websiteHref ? `
+              <div class="info-item">
+                <span class="info-icon">🌐</span>
+                <div>
+                  <div class="info-label">Website</div>
+                  <div class="info-value">
+                    <a href="${escapeHtml(websiteHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(websiteDisplay)}</a>
+                  </div>
+                </div>
+              </div>` : ''}
+              ${instaHandle ? `
+              <div class="info-item">
+                <span class="info-icon">📸</span>
+                <div>
+                  <div class="info-label">Instagram</div>
+                  <div class="info-value">
+                    <a href="https://instagram.com/${escapeHtml(instaHandle)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(instaHandle)}</a>
+                  </div>
+                </div>
+              </div>` : ''}
+            </div>
+          </div>
+        </div>
+      `
+    }
+
+    function showError(title, message) {
+      document.getElementById('content').innerHTML = `
+        <div class="error-state">
+          <h2>${title}</h2>
+          <p>${message}</p>
+          <a href="/" class="btn-back">Back to Directory</a>
+        </div>
+      `
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+    }
+
+    loadBusiness()
+  </script>
+
+</body>
+</html>
