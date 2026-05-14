@@ -1,5 +1,8 @@
 # Heights Connect
 
+<img width="1914" height="909" alt="image" src="https://github.com/user-attachments/assets/b4d4f2a9-bfc9-4add-9c5e-218a1dd1b10c" />
+
+
 A community-driven business directory for Washington Heights, New York. Helping residents discover and support local businesses in the neighborhood.
 
 **Live site:** [heights-connect-production.up.railway.app](https://heights-connect-production.up.railway.app)
